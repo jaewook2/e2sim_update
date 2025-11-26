@@ -25,7 +25,7 @@ struct GlobalENB_ID;
 
 /* GlobalE2node-ng-eNB-ID */
 typedef struct GlobalE2node_ng_eNB_ID {
-	GlobalngeNB_ID_t	 global_ng_eNB_ID;
+	GlobalNgENB_ID_t	 global_ng_eNB_ID;
 	struct GlobalENB_ID	*global_eNB_ID;	/* OPTIONAL */
 	E2AP_IEs_NGENB_DU_ID_t	*ngENB_DU_ID;	/* OPTIONAL */
 	/*

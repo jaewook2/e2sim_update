@@ -20,7 +20,7 @@ asn_TYPE_member_t asn_MBR_GlobalNG_RANNode_ID_1[] = {
 	{ ATF_POINTER, 0, offsetof(struct GlobalNG_RANNode_ID, choice.gNB),
 		(ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_GlobalgNB_ID,
+		&asn_DEF_GlobalGNB_ID,
 		0,
 		{
 #if !defined(ASN_DISABLE_OER_SUPPORT)
@@ -37,7 +37,7 @@ asn_TYPE_member_t asn_MBR_GlobalNG_RANNode_ID_1[] = {
 	{ ATF_POINTER, 0, offsetof(struct GlobalNG_RANNode_ID, choice.ng_eNB),
 		(ASN_TAG_CLASS_CONTEXT | (1 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_GlobalngeNB_ID,
+		&asn_DEF_GlobalNgENB_ID,
 		0,
 		{
 #if !defined(ASN_DISABLE_OER_SUPPORT)

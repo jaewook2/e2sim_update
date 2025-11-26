@@ -22,7 +22,7 @@ extern "C" {
 
 /* GlobalKPMnode-ng-eNB-ID */
 typedef struct GlobalKPMnode_ng_eNB_ID {
-	GlobalngeNB_ID_t	 global_ng_eNB_ID;
+	GlobalNgENB_ID_t	 global_ng_eNB_ID;
 	GNB_DU_ID_t	*gNB_DU_ID;	/* OPTIONAL */
 	/*
 	 * This type is extensible,

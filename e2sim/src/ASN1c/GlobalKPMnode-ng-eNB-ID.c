@@ -11,7 +11,7 @@ asn_TYPE_member_t asn_MBR_GlobalKPMnode_ng_eNB_ID_1[] = {
 	{ ATF_NOFLAGS, 0, offsetof(struct GlobalKPMnode_ng_eNB_ID, global_ng_eNB_ID),
 		(ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_GlobalngeNB_ID,
+		&asn_DEF_GlobalNgENB_ID,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

@@ -11,7 +11,7 @@ asn_TYPE_member_t asn_MBR_GlobalKPMnode_gNB_ID_1[] = {
 	{ ATF_NOFLAGS, 0, offsetof(struct GlobalKPMnode_gNB_ID, global_gNB_ID),
 		(ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_GlobalgNB_ID,
+		&asn_DEF_GlobalGNB_ID,
 		0,
 		{ 0, 0, 0 },
 		0, 0, /* No default value */

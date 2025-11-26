@@ -180,18 +180,21 @@ void encoding::generate_e2apv1_setup_request_parameterized(E2AP_PDU_t *e2ap_pdu,
     plmnid->buf = (uint8_t *) calloc(1, 3);
     memcpy(plmnid->buf, plmn_id, 3);
     plmnid->size = 3;
-
+    /*
     GNB_ID_Choice_t *gnbchoice = (GNB_ID_Choice_t *) calloc(1, sizeof(GNB_ID_Choice_t));
     GNB_ID_Choice_PR pres2 = GNB_ID_Choice_PR_gnb_ID;
     gnbchoice->present = pres2;
     gnbchoice->choice.gnb_ID = *gnb_bstring;
     if (gnb_bstring) free(gnb_bstring);
+*/
+    GlobalGNB_ID_t *gnb = (GlobalGNB_ID_t *) calloc(1, sizeof(GlobalGNB_ID_t));
+    gnb->pLMNIdentity = *plmnid;
+        // gNB_ID 설정
+    gnb->gNB_ID.present = GNB_ID_PR_gNB_ID;
+    gnb->gNB_ID.choice.gNB_ID = *gnb_bstring;
 
-    GlobalgNB_ID_t *gnb = (GlobalgNB_ID_t *) calloc(1, sizeof(GlobalgNB_ID_t));
-    gnb->plmn_id = *plmnid;
-    gnb->gnb_id = *gnbchoice;
+    if (gnb_bstring)  free(gnb_bstring);
     if (plmnid) free(plmnid);
-    if (gnbchoice) free(gnbchoice);
 
     GlobalE2node_gNB_ID_t *e2gnb = (GlobalE2node_gNB_ID_t *) calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     e2gnb->global_gNB_ID = *gnb;
@@ -1051,18 +1054,23 @@ void encoding::generate_e2apv1_setup_request_parameterized(E2AP_PDU_t *e2ap_pdu,
     plmn->buf = (uint8_t*)calloc(1,3);
     memcpy(plmn->buf, buf2, 3);
     plmn->size = 3;
-  
+   /*
     GNB_ID_Choice_t *gnbchoice = (GNB_ID_Choice_t*)calloc(1,sizeof(GNB_ID_Choice_t));
     GNB_ID_Choice_PR pres2 = GNB_ID_Choice_PR_gnb_ID;
     gnbchoice->present = pres2;
     gnbchoice->choice.gnb_ID = *gnb_bstring;
     if (gnb_bstring) free(gnb_bstring);
-  
-    GlobalgNB_ID_t *gnb = (GlobalgNB_ID_t*)calloc(1, sizeof(GlobalgNB_ID_t));
-    gnb->plmn_id = *plmn;
-    gnb->gnb_id = *gnbchoice;
+  */
+    GlobalGNB_ID_t  *gnb = (GlobalGNB_ID_t *)calloc(1, sizeof(GlobalGNB_ID_t));
+    gnb->pLMNIdentity = *plmn;
+
+    // gNB_ID 설정
+    gnb->gNB_ID.present = GNB_ID_PR_gNB_ID;
+    gnb->gNB_ID.choice.gNB_ID = *gnb_bstring;
+
+    if (gnb_bstring)  free(gnb_bstring);
     if (plmn) free(plmn);
-    if (gnbchoice) free(gnbchoice);
+
   
     GlobalE2node_gNB_ID_t *e2gnb = (GlobalE2node_gNB_ID_t*)calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     e2gnb->global_gNB_ID = *gnb;
