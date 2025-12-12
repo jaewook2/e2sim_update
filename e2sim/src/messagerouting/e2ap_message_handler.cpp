@@ -117,9 +117,9 @@ bool e2ap_handle_sctp_data(int &socket_fd, sctp_buffer_t &data, E2Sim *e2sim) {
                     break;
             }
             break;
-        /* ==> 필요할거 같음.
+        // 1208 modification
         case ProcedureCode_id_RICcontrol: // Procedure code = 4
-            switch (pr_type_of_message) {
+            switch (index) {
                 case E2AP_PDU_PR_initiatingMessage: {
                     LOG_I("*******[E2AP] Received RIC-CONTROL-REQUEST******");
 
@@ -132,12 +132,11 @@ bool e2ap_handle_sctp_data(int &socket_fd, sctp_buffer_t &data, E2Sim *e2sim) {
                 case E2AP_PDU_PR_unsuccessfulOutcome: LOG_I("[E2SM] Received RIC-CONTROL-FAILURE");
                     break;
 
-                default: LOG_E("[E2SM] Invalid message index=%d in PDU %ld", pr_type_of_message,
-                               ProcedureCode_id_RICcontrol);
+                default: LOG_E("[E2AP] Invalid message index=%d in E2AP-PDU", index);
                     break;
             }
             break;
-        */
+  
         case ProcedureCode_id_RICindication: // 5 ==> 205
             LOG_I("Received a message of RIC indication procedure"); // jlee add
 

@@ -180,7 +180,7 @@ int E2Sim::run_loop(std::string server_ip, uint16_t server_port, uint16_t local_
 
 
         if (next_func.ranFunctionId == 3) {
-          const char* oid = "1.3.6.1.4.1.53148.1.1.2.100";   // RC
+          const char* oid = "1.3.6.1.4.1.53148.1.3.2";   // RC
           //const char* shortName = "ORAN-E2SM-RC";
 
           ranFunctionOIDe->buf = (uint8_t*)calloc(1,strlen((char*)oid)+1);
@@ -195,7 +195,7 @@ int E2Sim::run_loop(std::string server_ip, uint16_t server_port, uint16_t local_
         LOG_I("RAN Function ID %ld → RC (OID=%s, ShortName=%s)", 
                next_func.ranFunctionId, oid, oid);
         } else {
-          const char* oid = "1.3.6.1.4.1.53148.1.1.2.1";   // KPM
+          const char* oid = "1.3.6.1.4.1.53148.1.1.2.1";   // KPM 1.3.6.1.4.1.53148.1.2.2
           //const char* shortName = "ORAN-E2SM-KPM";
 
           ranFunctionOIDe->buf = (uint8_t*)calloc(1,strlen((char*)oid)+1);
