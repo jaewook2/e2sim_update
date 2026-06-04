@@ -33,6 +33,7 @@
 
 #include "encode_e2apv1.hpp"
 
+
 extern "C" {
 
 #include "e2ap_asn1c_codec.h"
@@ -56,7 +57,11 @@ extern "C" {
 #include "RICsubsequentAction.h"  
 #include "RICtimeToWait.h"
 #include "E2nodeComponentInterfaceNG.h"
+#include "E2nodeComponentInterfaceF1.h"
 }
+// #include "encode_f1ap.hpp"
+
+
 
 long encoding::get_function_id_from_subscription(E2AP_PDU_t *e2ap_pdu) {
 
@@ -256,45 +261,61 @@ void encoding::generate_e2apv1_setup_request_parameterized(E2AP_PDU_t *e2ap_pdu,
         ASN_SEQUENCE_ADD(&ranFlistIEs->value.choice.RANfunctions_List.list, itemIes);
 
     }
-
+    // To be update for 
     auto *e2configIE = (E2setupRequestIEs_t *)calloc(1, sizeof(E2setupRequestIEs_t));
+
     e2configIE->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition;
     e2configIE->criticality = Criticality_reject;
     e2configIE->value.present = E2setupRequestIEs__value_PR_E2nodeComponentConfigAddition_List;
-   
+    
+    
     auto *e2configAdditionItem = (E2nodeComponentConfigAddition_ItemIEs_t *)calloc(1, sizeof(E2nodeComponentConfigAddition_ItemIEs_t));
+    
     e2configAdditionItem->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition_Item;
     e2configAdditionItem->criticality = Criticality_reject;
     e2configAdditionItem->value.present = E2nodeComponentConfigAddition_ItemIEs__value_PR_E2nodeComponentConfigAddition_Item;
+    
+    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentInterfaceType = E2nodeComponentInterfaceType_f1;
+    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.present = E2nodeComponentID_PR_e2nodeComponentInterfaceTypeF1;
+    
+    auto *intfF1 = (E2nodeComponentInterfaceF1_t *) calloc(1, sizeof(E2nodeComponentInterfaceF1_t));
 
-    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentInterfaceType = E2nodeComponentInterfaceType_ng;
-    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.present = E2nodeComponentID_PR_e2nodeComponentInterfaceTypeNG;
+    long du_id = 1;  // 원하는 gNB_DU_ID 값
+    if(asn_long2INTEGER(&intfF1->gNB_DU_ID, du_id) != 0) {
+    fprintf(stderr, "asn_long2INTEGER failed (gNB_DU_ID=%ld)\n", du_id);
 
-    auto *intfNG = (E2nodeComponentInterfaceNG_t *) calloc(1, sizeof(E2nodeComponentInterfaceNG_t));
+    // intfF1 내부에 buf가 일부 할당됐을 수도 있으니 ASN_STRUCT_FREE로 정리하는 게 안전
+    ASN_STRUCT_FREE(asn_DEF_E2nodeComponentInterfaceF1, intfF1);
+    intfF1 = nullptr;
+    }
 
-    OCTET_STRING_t nginterf;
-    nginterf.buf = (uint8_t*)calloc(1,8);
-    memcpy(nginterf.buf, (uint8_t *)"nginterf", 8);
+    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.choice.e2nodeComponentInterfaceTypeF1 = intfF1;
 
-    nginterf.size = 8;
-    intfNG->amf_name = (AMFName_t)(nginterf);
+    // To be change with F1AP ASN
+    /*
+    uint8_t *f1ap_buf = NULL;
+    size_t f1ap_len = 0;
 
-    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.choice.e2nodeComponentInterfaceTypeNG = intfNG;
+    if(encode_f1ap_setup_request(du_id, &f1ap_buf, &f1ap_len) != 0) {
+        fprintf(stderr, "encode_f1ap_setup_request failed\n");
+    }
 
     OCTET_STRING_t reqPart;
-    reqPart.buf = (uint8_t*)calloc(1,7);
-    memcpy(reqPart.buf, (uint8_t *)"reqpart", 7);
-    reqPart.size = 7;
+    memset(&reqPart, 0, sizeof(reqPart));
+    reqPart.buf = f1ap_buf;   // 소유권 ASN으로 이동
+    reqPart.size = f1ap_len;
 
     e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentConfiguration.e2nodeComponentRequestPart = reqPart;
 
     OCTET_STRING_t resPart;
-    resPart.buf = (uint8_t*)calloc(1,7);
-    memcpy(resPart.buf, (uint8_t *)"respart", 7);
-    resPart.size = 7;
+    memset(&resPart, 0, sizeof(resPart));
+
+    resPart.buf = (uint8_t*)calloc(1, 1);
+    resPart.size = 0;
 
     e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentConfiguration.e2nodeComponentResponsePart = resPart;
-
+    */
+    //
     ASN_SEQUENCE_ADD(&e2configIE->value.choice.RANfunctions_List.list, e2configAdditionItem);
 
     E2setupRequest_t  *e2setupreq = (E2setupRequest_t *) calloc(1, sizeof(E2setupRequest_t));
@@ -1128,31 +1149,38 @@ void encoding::generate_e2apv1_setup_request_parameterized(E2AP_PDU_t *e2ap_pdu,
   
     }
   
+// To be fixed for F1AP
   auto *e2configIE = (E2setupRequestIEs_t *)calloc(1, sizeof(E2setupRequestIEs_t));
+
   e2configIE->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition;
   e2configIE->criticality = Criticality_reject;
   e2configIE->value.present = E2setupRequestIEs__value_PR_E2nodeComponentConfigAddition_List;
   
   
   auto *e2configAdditionItem = (E2nodeComponentConfigAddition_ItemIEs_t *)calloc(1, sizeof(E2nodeComponentConfigAddition_ItemIEs_t));
+  
   e2configAdditionItem->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition_Item;
   e2configAdditionItem->criticality = Criticality_reject;
   e2configAdditionItem->value.present = E2nodeComponentConfigAddition_ItemIEs__value_PR_E2nodeComponentConfigAddition_Item;
   
-  e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentInterfaceType = E2nodeComponentInterfaceType_ng;
-  e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.present = E2nodeComponentID_PR_e2nodeComponentInterfaceTypeNG;
+  e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentInterfaceType = E2nodeComponentInterfaceType_f1;
+  e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.present = E2nodeComponentID_PR_e2nodeComponentInterfaceTypeF1;
   
-  auto *intfNG = (E2nodeComponentInterfaceNG_t *) calloc(1, sizeof(E2nodeComponentInterfaceNG_t));
-    
-  OCTET_STRING_t nginterf;
-  nginterf.buf = (uint8_t*)calloc(1,8);
-  memcpy(nginterf.buf, (uint8_t *)"nginterf", 8);
+  auto *intfF1 = (E2nodeComponentInterfaceF1_t *) calloc(1, sizeof(E2nodeComponentInterfaceF1_t));
+
+  long du_id = 1;  // 원하는 gNB_DU_ID 값
+  if(asn_long2INTEGER(&intfF1->gNB_DU_ID, du_id) != 0) {
+   fprintf(stderr, "asn_long2INTEGER failed (gNB_DU_ID=%ld)\n", du_id);
+
+   // intfF1 내부에 buf가 일부 할당됐을 수도 있으니 ASN_STRUCT_FREE로 정리하는 게 안전
+   ASN_STRUCT_FREE(asn_DEF_E2nodeComponentInterfaceF1, intfF1);
+   intfF1 = nullptr;
+  }
+
+  e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.choice.e2nodeComponentInterfaceTypeF1 = intfF1;
   
-  nginterf.size = 8;
-  intfNG->amf_name = (AMFName_t)(nginterf);
-  
-  e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.choice.e2nodeComponentInterfaceTypeNG = intfNG;
-  
+//
+
   OCTET_STRING_t reqPart;
   reqPart.buf = (uint8_t*)calloc(1,7);
   memcpy(reqPart.buf, (uint8_t *)"reqpart", 7);
@@ -1270,19 +1298,21 @@ void encoding::generate_e2apv2_config_update(E2AP_PDU_t *e2ap_pdu) {
     e2configAdditionItem->criticality = Criticality_reject;
     e2configAdditionItem->value.present = E2nodeComponentConfigAddition_ItemIEs__value_PR_E2nodeComponentConfigAddition_Item;
 
-    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentInterfaceType = E2nodeComponentInterfaceType_ng;
-    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.present = E2nodeComponentID_PR_e2nodeComponentInterfaceTypeNG;
+    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentInterfaceType = E2nodeComponentInterfaceType_f1;
+    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.present = E2nodeComponentID_PR_e2nodeComponentInterfaceTypeF1;
 
-    auto *intfNG = (E2nodeComponentInterfaceNG_t *) calloc(1, sizeof(E2nodeComponentInterfaceNG_t));
+    auto *intfF1 = (E2nodeComponentInterfaceF1_t *) calloc(1, sizeof(E2nodeComponentInterfaceF1_t));
 
-    OCTET_STRING_t nginterf;
-    nginterf.buf = (uint8_t*)calloc(1,8);
-    memcpy(nginterf.buf, (uint8_t *)"nginterf", 8);
+    long du_id = 1;  // 원하는 gNB_DU_ID 값
+    if(asn_long2INTEGER(&intfF1->gNB_DU_ID, du_id) != 0) {
+    fprintf(stderr, "asn_long2INTEGER failed (gNB_DU_ID=%ld)\n", du_id);
 
-    nginterf.size = 8;
-    intfNG->amf_name = (AMFName_t)(nginterf);
+    // intfF1 내부에 buf가 일부 할당됐을 수도 있으니 ASN_STRUCT_FREE로 정리하는 게 안전
+    ASN_STRUCT_FREE(asn_DEF_E2nodeComponentInterfaceF1, intfF1);
+    intfF1 = nullptr;
+    }
 
-    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.choice.e2nodeComponentInterfaceTypeNG = intfNG;
+    e2configAdditionItem->value.choice.E2nodeComponentConfigAddition_Item.e2nodeComponentID.choice.e2nodeComponentInterfaceTypeF1 = intfF1;
 
     OCTET_STRING_t reqPart;
     reqPart.buf = (uint8_t*)calloc(1,7);

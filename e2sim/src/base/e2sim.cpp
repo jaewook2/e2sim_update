@@ -160,6 +160,7 @@ int E2Sim::run_loop(std::string server_ip, uint16_t server_port, uint16_t local_
     
     // Loop through RAN function definitions that are registered
     //To be fixed for interacting ns-3 1103 
+    // 1226 : VIVI랑 연동
     LOG_I("Constructing a list of RAN functions based on registered information");
     for (std::pair<long, OCTET_STRING_t*> elem : ran_functions_registered) {
 
@@ -172,46 +173,40 @@ int E2Sim::run_loop(std::string server_ip, uint16_t server_port, uint16_t local_
         encoding::ran_func_info next_func;
         next_func.ranFunctionId = elem.first;
         next_func.ranFunctionDesc = elem.second;
-        next_func.ranFunctionRev = (long)2;
+        
         
         //0210 adding
         RANfunctionOID_t *ranFunctionOIDe = (RANfunctionOID_t*)calloc(1,sizeof(RANfunctionOID_t));
         //RANfunction_Name_t* ranFunctionName = (RANfunction_Name_t*)calloc(1, sizeof(RANfunction_Name_t));
 
 
-        if (next_func.ranFunctionId == 3) {
-          const char* oid = "1.3.6.1.4.1.53148.1.3.2";   // RC
-          //const char* shortName = "ORAN-E2SM-RC";
-
+        if (next_func.ranFunctionId == 2) { // KPM
+          const char* oid = "1.3.6.1.4.1.53148.1.2.2";   // KPM 1.3.6.1.4.1.53148.1.2.2
+          const char* shortName = "ORAN-E2SM-KPM";
+          next_func.ranFunctionRev = (long)203;
           ranFunctionOIDe->buf = (uint8_t*)calloc(1,strlen((char*)oid)+1);
           memcpy(ranFunctionOIDe->buf, oid, strlen(oid) + 1);
           ranFunctionOIDe->size = strlen(oid);
-          /*
-          ranFunctionName->ranFunction_ShortName.buf  = (uint8_t*)calloc(1, strlen(shortName) + 1);
-          memcpy(ranFunctionName->ranFunction_ShortName.buf, shortName, strlen(shortName) + 1);
-          ranFunctionName->ranFunction_ShortName.size = strlen(shortName);
-          */
+          LOG_I("RAN Function ID %ld → RC (OID=%s, ShortName=%s)",  next_func.ranFunctionId, oid, shortName);
 
-        LOG_I("RAN Function ID %ld → RC (OID=%s, ShortName=%s)", 
-               next_func.ranFunctionId, oid, oid);
-        } else {
-          const char* oid = "1.3.6.1.4.1.53148.1.1.2.1";   // KPM 1.3.6.1.4.1.53148.1.2.2
-          //const char* shortName = "ORAN-E2SM-KPM";
 
+        } else if (next_func.ranFunctionId == 3) {
+          const char* oid = "1.3.6.1.4.1.53148.1.1.2.3";   // RC v1.03?????
+          const char* shortName = "ORAN-E2SM-RC";
+          next_func.ranFunctionRev = (long)103;
           ranFunctionOIDe->buf = (uint8_t*)calloc(1,strlen((char*)oid)+1);
           memcpy(ranFunctionOIDe->buf, oid, strlen(oid) + 1);
           ranFunctionOIDe->size = strlen(oid);
-           /*
-          ranFunctionName->ranFunction_ShortName.buf  = (uint8_t*)calloc(1, strlen(shortName) + 1);
-          memcpy(ranFunctionName->ranFunction_ShortName.buf, shortName, strlen(shortName) + 1);
-          ranFunctionName->ranFunction_ShortName.size = strlen(shortName);
-           */ 
+          LOG_I("RAN Function ID %ld → RC (OID=%s, ShortName=%s)",  next_func.ranFunctionId, oid, shortName);
 
-        LOG_I("RAN Function ID %ld → KPM (OID=%s, ShortName=%s)", 
-               next_func.ranFunctionId, oid, oid);
         }
-        next_func.ranFunctionOId = ranFunctionOIDe;
+
         
+        //ranFunctionName->ranFunction_ShortName.buf  = (uint8_t*)calloc(1, strlen(shortName) + 1);
+        //memcpy(ranFunctionName->ranFunction_ShortName.buf, shortName, strlen(shortName) + 1);
+        //ranFunctionName->ranFunction_ShortName.size = strlen(shortName);
+
+        next_func.ranFunctionOId = ranFunctionOIDe;
         //next_func.ranFunctionName  = ranFunctionName;
 
         LOG_I("Adding RAN function ID2 %ld, description: %s to the list", elem.first, ran_desc);
